@@ -3,6 +3,7 @@ var express = require('express');
 var request = require('request');
 var cheerio = require('cheerio');
 var moment = require('moment');
+var path = require('path');
 
 
 var app = express();
@@ -15,8 +16,7 @@ var api = new function(){
 	this.init = function(){
 		var self = this;
 		app.get('/', function(request, response) {
-
-		  response.send('wouhuhuhu');
+		  response.sendFile(path.join(__dirname + '/index.html'));
 		});
 		app.get('/getLastPositionFromVF/:imo', function(request, response) {
 		  self.getLocationFromVF(request.params.imo, function(result){
@@ -125,7 +125,7 @@ var api = new function(){
 		    //console.log($('span.small-7.columns.value').text());
 		    if(timestamp && source && speed && lat && lon && course)
 		   		cb({error:null,data:{ timestamp: timestamp.trim(), latitude:lat.trim(), longitude:lon.trim()}})
-		   	
+
 		  	cb({error:'an unknown error occured'});
 		  }else{
 		  	cb({error:error});

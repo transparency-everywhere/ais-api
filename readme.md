@@ -2,27 +2,24 @@ AIS API
 =======
 I looked for a free API solution to access machine readable AIS Data. This solution uses the free web solutions to crawl the data and returns them in json.
 
-##How to use
+## How to use
 This is a nodejs web app.
 
-##Paths
+### Paths
 
-/getLastPosition/:mmsi/:imo
----------------------------
+#### /getLastPosition/:mmsi/:imo
 Takes position from MT and from VT and returns the newest
 example: http://localhost:5000/getLastPosition/244140096/7302225
 
-/getLastPositionFromVF/:imo
----------------------------
+#### /getLastPositionFromVF/:imo
 Returns position from VF
 example: http://localhost:5000/getLastPosition/7302225
 
-/getLastPositionFromMT/:mmsi
------------------------------
+#### /getLastPositionFromMT/:mmsi
 Returns position from MT
 example: http://localhost:5000/getLastPosition/244140096
 
-###Install on local machine
+## Install on local machine
 
 Requirements: npm & nodejs.
 
@@ -32,7 +29,7 @@ Requirements: npm & nodejs.
 
 3. run `node index.js`
 
-###Deploy to heroku
+## Deploy to heroku
 
 This application can be easily deployed to heroku, simply install the heroku cli and run the following commands:
 
