@@ -15,13 +15,18 @@ var api = new function(){
 	this.init = function(){
 		var self = this;
 		app.get('/', function(request, response) {
+
 		  response.send('wouhuhuhu');
 		});
-		app.get('/getLastPositionFromVF/', function(request, response) {
-		  response.send('wouhuhuhu');
+		app.get('/getLastPositionFromVF/:imo', function(request, response) {
+		  self.getLocationFromVF(request.params.imo, function(result){
+		  	response.send(result);
+		  })
 		});
-		app.get('/getLastPositionFromMT/', function(request, response) {
-		  response.send('wouhuhuhu');
+		app.get('/getLastPositionFromMT/:mmsi', function(request, response) {
+		  self.getLocationFromMT(request.params.mmsi, function(result){
+		  	response.send(result);
+		  })
 		});
 		app.get('/getLastPosition/:mmsi/:imo', function (req, res) {
 		  //res.send(req.params);
@@ -82,6 +87,8 @@ var api = new function(){
 		    var lon = $('span[itemprop="longitude"]').text();
 		    //console.log($('span.small-7.columns.value').text());
 		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon}})
+		  }else{
+		  	cb({error:'an unknown error occured'});
 		  }
 		});
 	}
@@ -118,6 +125,8 @@ var api = new function(){
 		    //console.log($('span.small-7.columns.value').text());
 		    if(timestamp && source && speed && lat && lon && course)
 		   		cb({error:null,data:{ timestamp: timestamp.trim(), latitude:lat.trim(), longitude:lon.trim()}})
+		   	
+		  	cb({error:'an unknown error occured'});
 		  }else{
 		  	cb({error:error});
 		  }
