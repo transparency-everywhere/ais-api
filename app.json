@@ -1,0 +1,7 @@
+{
+  "name": "AIS API",
+  "description": "Node AIS API Heroku app",
+  "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/master/public/node.svg",
+  "keywords": ["api", "ais"],
+  "image": "heroku/nodejs"
+}

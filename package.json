@@ -1,0 +1,25 @@
+{
+  "name": "ais_scraper",
+  "version": "1.0.0",
+  "description": "ais scraping script",
+  "main": "index.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "moment": "^2.19.1",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ais"
+  ],
+  "engines": {
+    "node": "6.11.1"
+  },
+  "author": "niczem",
+  "license": "MIT"
+}
