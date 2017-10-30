@@ -13,11 +13,11 @@ example: http://localhost:5000/getLastPosition/244140096/7302225
 
 #### /getLastPositionFromVF/:imo
 Returns position from VF
-example: http://localhost:5000/getLastPosition/7302225
+example: http://localhost:5000/getLastPositionFromVF/7302225
 
 #### /getLastPositionFromMT/:mmsi
 Returns position from MT
-example: http://localhost:5000/getLastPosition/244140096
+example: http://localhost:5000/getLastPositionFromMT/244140096
 
 ## Install on local machine
 
