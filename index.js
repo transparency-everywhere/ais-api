@@ -18,8 +18,8 @@ var api = new function(){
 		app.get('/', function(request, response) {
 		  response.sendFile(path.join(__dirname + '/index.html'));
 		});
-		app.get('/getLastPositionFromVF/:imo', function(request, response) {
-		  self.getLocationFromVF(request.params.imo, function(result){
+		app.get('/getLastPositionFromVF/:mmsi', function(request, response) {
+		  self.getLocationFromVF(request.params.mmsi, function(result){
 		  	response.send(result);
 		  })
 		});
@@ -28,10 +28,10 @@ var api = new function(){
 		  	response.send(result);
 		  })
 		});
-		app.get('/getLastPosition/:mmsi/:imo', function (req, res) {
+		app.get('/getLastPosition/:mmsi', function (req, res) {
 		  //res.send(req.params);
 
-		  self.getLocation(req.params.mmsi, req.params.imo, function(result){
+		  self.getLocation(req.params.mmsi, function(result){
 		  	res.send(result);
 		  })
 		})
@@ -40,11 +40,11 @@ var api = new function(){
 		});
 
 	}
-	this.getLocation = function(mmsi, imo, cb){
-		console.log(mmsi,imo);
+	this.getLocation = function(mmsi, cb){
+		console.log(mmsi);
 		var self = this;
-		console.log('getting location for vehicle',mmsi, imo);
-		this.getLocationFromVF(imo,function(VFResult){
+		console.log('getting location for vehicle',mmsi);
+		this.getLocationFromVF(mmsi,function(VFResult){
 
 			console.log('got location fro vf');
 			self.getLocationFromMT(mmsi,function(MTResult){
@@ -67,8 +67,8 @@ var api = new function(){
 
 		});
 	}
-	this.getLocationFromVF = function(IMO,cb){
-		var url = 'https://www.vesselfinder.com/vessels/somestring-IMO-'+IMO;
+	this.getLocationFromVF = function(MMSI,cb){
+		var url = 'https://www.vesselfinder.com/vessels/somestring-IMO-0-MMSI-'+MMSI;
 
 		var options = {
 		  url: url,
@@ -88,6 +88,8 @@ var api = new function(){
 		    //console.log($('span.small-7.columns.value').text());
 		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon}})
 		  }else{
+		  	console.log('error VF');
+		  	console.log(html);
 		  	cb({error:'an unknown error occured'});
 		  }
 		});
