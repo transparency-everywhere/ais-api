@@ -46,7 +46,7 @@ var api = new function(){
 		console.log('getting location for vehicle',mmsi);
 		this.getLocationFromVF(mmsi,function(VFResult){
 
-			console.log('got location fro vf');
+			console.log('got location from vf');
 			self.getLocationFromMT(mmsi,function(MTResult){
 
 
@@ -89,13 +89,13 @@ var api = new function(){
 		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon}})
 		  }else{
 		  	console.log('error VF');
-		  	console.log(html);
+		  	//console.log(html);
 		  	cb({error:'an unknown error occured'});
 		  }
 		});
 	}
 	this.getLocationFromMT = function(mmsi,cb){
-		var url = 'https://www.marinetraffic.com/en/ais/index/positions/all/mmsi:'+mmsi+'';
+		var url = 'https://www.marinetraffic.com/en/ais/details/ships/mmsi:'+mmsi+'';
 		console.log(url);
 		var options = {
 		  url: url,
@@ -109,26 +109,24 @@ var api = new function(){
 		    //console.log(html);
 		    var $ = cheerio.load(html);
 		   
-		    var tds = [], times = [];
-		    $('.filters_results_table tr td').each(function(i, elem) {
-			  tds[i] = $(this).text();
-			});
+		    /*
+			convert 1 hour, 11 minutes ago (2018-11-23 01:17 (UTC))
+			to 2018-11-23 01:17 (UTC)
+		    */
+		   	var date_str = $('#tabs-last-pos .group-ib strong').first().text().match(/\(([^)]+)\)/)[1]+')';
+			var timestamp = new Date(date_str).toString();
 
-		    $('.filters_results_table tr td time').each(function(i, elem) {
-			  times[i] = parseInt($(this).text()+'000');
-			});
+		   	var lat_lon = $('#tabs-last-pos .details_data_link').text().replace('°','').replace('°','');
+		    var lat = lat_lon.split('/')[0];
+		    var lon = lat_lon.split('/')[1];
 
-		    var timestamp = new Date(times[1]).toString();
-		    var source = tds[1];
-		    var speed = tds[2];
-		    var lat = tds[3];
-		    var lon = tds[4];
-		    var course = tds[5];
-		    //console.log($('span.small-7.columns.value').text());
-		    if(timestamp && source && speed && lat && lon && course)
+		    var speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
+		    var speed = speed_course.split('/')[0];
+		    var course = speed_course.split('/')[1];
+		    if(timestamp  && speed && lat && lon && course)
 		   		cb({error:null,data:{ timestamp: timestamp.trim(), latitude:lat.trim(), longitude:lon.trim()}})
-
-		  	cb({error:'an unknown error occured'});
+		   	else
+		  		cb({error:'an unknown error occured'});
 		  }else{
 		  	cb({error:error});
 		  }
