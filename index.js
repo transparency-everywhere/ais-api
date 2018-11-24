@@ -68,7 +68,7 @@ var api = new function(){
 		});
 	}
 	this.getLocationFromVF = function(MMSI,cb){
-		var url = 'https://www.vesselfinder.com/vessels/somestring-IMO-0-MMSI-'+MMSI;
+		var url = 'https://www.vesselfinder.com/vessels/somestring-MMSI-'+MMSI;
 
 		var options = {
 		  url: url,
@@ -81,11 +81,14 @@ var api = new function(){
 		  if (!error && response.statusCode == 200 || response.statusCode == 403) {
 		    //console.log(html);
 		    var $ = cheerio.load(html);
-		   
-		    var timestamp = $('#last_report_ts').text();
-		    var lat = $('span[itemprop="latitude"]').text();
-		    var lon = $('span[itemprop="longitude"]').text();
-		    //console.log($('span.small-7.columns.value').text());
+		    var course_speed = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(9) .v3').text();
+		    var course = course_speed.split('/')[0];
+		    var speed = course_speed.split('/')[1];
+		    var lat_lon = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(10) .v3').text();
+		    var lat = lat_lon. split('/')[0];
+		    var lon = lat_lon. split ('/') [1];
+		    var timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();;
+
 		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon}})
 		  }else{
 		  	console.log('error VF');
@@ -119,7 +122,7 @@ var api = new function(){
 		   	var lat_lon = $('#tabs-last-pos .details_data_link').text().replace('°','').replace('°','');
 		    var lat = lat_lon.split('/')[0];
 		    var lon = lat_lon.split('/')[1];
-
+null
 		    var speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
 		    var speed = speed_course.split('/')[0];
 		    var course = speed_course.split('/')[1];
