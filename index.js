@@ -52,14 +52,14 @@ var api = new function(){
 
 
 
-				var vfDate = moment(VFResult.timestamp);
-				var mtDate = moment(MTResult.timestamp);
+				var vfDate = moment(VFResult.data.timestamp);
+				var mtDate = moment(MTResult.data.timestamp);
 				var secondsDiff = mtDate.diff(vfDate, 'seconds')
 				console.log(secondsDiff)
 				if(secondsDiff < 0){
 					cb(VFResult);
 				}else if(secondsDiff > 0){
-					cb(mtDate);
+					cb(MTResult);
 				}else{
 					cb(VFResult);
 				}

@@ -7,13 +7,13 @@ This is a nodejs web app.
 
 ### Paths
 
-#### /getLastPosition/:mmsi/:imo
+#### /getLastPosition/:mmsi
 Takes position from MT and from VT and returns the newest
-example: http://localhost:5000/getLastPosition/244140096/7302225
+example: http://localhost:5000/getLastPosition/244140096
 
-#### /getLastPositionFromVF/:imo
+#### /getLastPositionFromVF/:mmsi
 Returns position from VF
-example: http://localhost:5000/getLastPositionFromVF/7302225
+example: http://localhost:5000/getLastPositionFromVF/244140096
 
 #### /getLastPositionFromMT/:mmsi
 Returns position from MT
