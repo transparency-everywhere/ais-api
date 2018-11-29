@@ -82,14 +82,14 @@ var api = new function(){
 		    //console.log(html);
 		    var $ = cheerio.load(html);
 		    var course_speed = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(9) .v3').text();
-		    var course = course_speed.split('/')[0];
-		    var speed = course_speed.split('/')[1];
+		    var course = course_speed.split('/')[0].replace('° ', '');
+		    var speed = course_speed.split('/')[1].replace(' kn', '');
 		    var lat_lon = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(10) .v3').text();
-		    var lat = lat_lon. split('/')[0];
-		    var lon = lat_lon. split ('/') [1];
+		    var lat = lat_lon. split('/')[0].replace(' N','');
+		    var lon = lat_lon. split ('/') [1].replace(' E','');
 		    var timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();;
 
-		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon}})
+		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon, course:course, speed:speed.trim()}})
 		  }else{
 		  	console.log('error VF');
 		  	//console.log(html);
@@ -124,10 +124,10 @@ var api = new function(){
 		    var lon = lat_lon.split('/')[1];
 null
 		    var speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
-		    var speed = speed_course.split('/')[0];
-		    var course = speed_course.split('/')[1];
+		    var speed = speed_course.split('/')[0].replace('kn ','');
+		    var course = speed_course.split('/')[1].replace('°','');
 		    if(timestamp  && speed && lat && lon && course)
-		   		cb({error:null,data:{ timestamp: timestamp.trim(), latitude:lat.trim(), longitude:lon.trim()}})
+		   		cb({error:null,data:{ timestamp: timestamp.trim(), latitude:lat.trim(), longitude:lon.trim(),speed:speed,course:course.trim()}})
 		   	else
 		  		cb({error:'an unknown error occured'});
 		  }else{
