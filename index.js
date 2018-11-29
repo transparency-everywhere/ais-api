@@ -87,9 +87,9 @@ var api = new function(){
 		    var lat_lon = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(10) .v3').text();
 		    var lat = lat_lon. split('/')[0].replace(' N','');
 		    var lon = lat_lon. split ('/') [1].replace(' E','');
-		    var timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();;
-
-		    cb({error:null,data:{ timestamp: timestamp, latitude:lat, longitude:lon, course:course, speed:speed.trim()}})
+		    var timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();
+			var unixtime = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).getTime()/1000;
+		    cb({error:null,data:{ timestamp: timestamp, unixtime: unixtime, latitude:lat, longitude:lon, course:course, speed:speed.trim()}})
 		  }else{
 		  	console.log('error VF');
 		  	//console.log(html);
@@ -118,6 +118,7 @@ var api = new function(){
 		    */
 		   	var date_str = $('#tabs-last-pos .group-ib strong').first().text().match(/\(([^)]+)\)/)[1]+')';
 			var timestamp = new Date(date_str).toString();
+			var unixtime = new Date(date_str).getTime()/1000;
 
 		   	var lat_lon = $('#tabs-last-pos .details_data_link').text().replace('°','').replace('°','');
 		    var lat = lat_lon.split('/')[0];
@@ -127,7 +128,7 @@ null
 		    var speed = speed_course.split('/')[0].replace('kn ','');
 		    var course = speed_course.split('/')[1].replace('°','');
 		    if(timestamp  && speed && lat && lon && course)
-		   		cb({error:null,data:{ timestamp: timestamp.trim(), latitude:lat.trim(), longitude:lon.trim(),speed:speed,course:course.trim()}})
+		   		cb({error:null,data:{ timestamp: timestamp.trim(), unixtime:unixtime, latitude:lat.trim(), longitude:lon.trim(),speed:speed,course:course.trim()}})
 		   	else
 		  		cb({error:'an unknown error occured'});
 		  }else{
