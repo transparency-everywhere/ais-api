@@ -81,6 +81,7 @@ var api = new function(){
 	}
 	this.getLocationFromVF = function(MMSI,cb){
 		var url = 'https://www.vesselfinder.com/vessels/somestring-MMSI-'+MMSI;
+		console.log(url);
 		var self = this;
 		var options = {
 		  url: url,
