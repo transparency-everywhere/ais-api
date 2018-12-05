@@ -41,16 +41,17 @@ var api = new function(){
 
 	}
 	this.parsePosition = function(position){
+		console.log(position);
 		return {
 			"error":position.error,
 			"data" :
 				{
-					timestamp: position.timestamp,
-					unixtime: position.unixtime,
-					latitude:parseFloat(position.lat),
-					longitude:parseFloat(position.lon),
-					course:parseFloat(position.course),
-					speed:parseFloat(position.speed)
+					timestamp: position.data.timestamp,
+					unixtime: position.data.unixtime,
+					latitude:parseFloat(position.data.latitude),
+					longitude:parseFloat(position.data.longitude),
+					course:parseFloat(position.data.course),
+					speed:parseFloat(position.data.speed)
 				}
 		}
 	}
@@ -62,9 +63,6 @@ var api = new function(){
 
 			console.log('got location from vf');
 			self.getLocationFromMT(mmsi,function(MTResult){
-
-
-
 
 				var vfDate = moment(VFResult.data.timestamp);
 				var mtDate = moment(MTResult.data.timestamp);
@@ -99,8 +97,24 @@ var api = new function(){
 		    var course = course_speed.split('/')[0].replace('° ', '');
 		    var speed = course_speed.split('/')[1].replace(' kn', '');
 		    var lat_lon = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(10) .v3').text();
-		    var lat = lat_lon. split('/')[0].replace(' N','');
-		    var lon = lat_lon. split ('/') [1].replace(' E','');
+		    console.log(lat_lon);
+
+		    var lat = lat_lon. split('/')[0]
+		    if(lat.indexOf('N')==-1){
+		    	lat = parseFloat(lat)*-1
+		    	console.log('contains no N', lat);
+		    }else
+		    	lat = parseFloat(lat);
+
+		    var lon = lat_lon. split ('/') [1];
+
+		    if(lon.indexOf('E')==-1){
+		    	lon = parseFloat(lon)*-1
+		    	console.log('contains no E', lon);
+		    }else
+		    	parseFloat(lon)
+
+
 		    var timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();
 			var unixtime = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).getTime()/1000;
 		    cb(self.parsePosition({error:null,data:{ timestamp: timestamp, unixtime: unixtime, latitude:lat, longitude:lon, course:course, speed:speed.trim()}}))
@@ -138,12 +152,24 @@ var api = new function(){
 		   	var lat_lon = $('#tabs-last-pos .details_data_link').text().replace('°','').replace('°','');
 		    var lat = lat_lon.split('/')[0];
 		    var lon = lat_lon.split('/')[1];
-null
+
+		    if(lat.indexOf('N')==-1){
+		    	lat = parseFloat(lat)*-1
+		    	console.log('contains no N', lat);
+		    }else
+		    	lat = parseFloat(lat);
+
+		    if(lon.indexOf('E')==-1){
+		    	lon = parseFloat(lon)*-1
+		    	console.log('contains no E', lon);
+		    }else
+		    	parseFloat(lon)
+
 		    var speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
 		    var speed = speed_course.split('/')[0].replace('kn ','');
 		    var course = speed_course.split('/')[1].replace('°','');
 		    if(timestamp  && speed && lat && lon && course)
-		   		cb(self.parsePosition({error:null,data:{ timestamp: timestamp.trim(), unixtime:unixtime, latitude:lat.trim(), longitude:lon.trim(),speed:speed,course:course.trim()}}));
+		   		cb(self.parsePosition({error:null,data:{ timestamp: timestamp.trim(), unixtime:unixtime, latitude:lat, longitude:lon,speed:speed,course:course.trim()}}));
 		   	else
 		  		cb({error:'an unknown error occured'});
 		  }else{
