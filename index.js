@@ -40,6 +40,20 @@ var api = new function(){
 		});
 
 	}
+	this.parsePosition = function(position){
+		return {
+			"error":position.error,
+			"data" :
+				{
+					timestamp: position.timestamp,
+					unixtime: position.unixtime,
+					latitude:parseFloat(position.lat),
+					longitude:parseFloat(position.lon),
+					course:parseFloat(position.course),
+					speed:parseFloat(position.speed)
+				}
+		}
+	}
 	this.getLocation = function(mmsi, cb){
 		console.log(mmsi);
 		var self = this;
@@ -69,7 +83,7 @@ var api = new function(){
 	}
 	this.getLocationFromVF = function(MMSI,cb){
 		var url = 'https://www.vesselfinder.com/vessels/somestring-MMSI-'+MMSI;
-
+		var self = this;
 		var options = {
 		  url: url,
 		  headers: {
@@ -89,7 +103,7 @@ var api = new function(){
 		    var lon = lat_lon. split ('/') [1].replace(' E','');
 		    var timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();
 			var unixtime = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).getTime()/1000;
-		    cb({error:null,data:{ timestamp: timestamp, unixtime: unixtime, latitude:lat, longitude:lon, course:course, speed:speed.trim()}})
+		    cb(self.parsePosition({error:null,data:{ timestamp: timestamp, unixtime: unixtime, latitude:lat, longitude:lon, course:course, speed:speed.trim()}}))
 		  }else{
 		  	console.log('error VF');
 		  	//console.log(html);
@@ -107,6 +121,7 @@ var api = new function(){
 		    'Content-Type' : 'application/x-www-form-urlencoded' 
 		  }
 		};
+		var self = this;
 		request(options, function (error, response, html) {
 		  if (!error && response.statusCode == 200 || response.statusCode == 403) {
 		    //console.log(html);
@@ -128,7 +143,7 @@ null
 		    var speed = speed_course.split('/')[0].replace('kn ','');
 		    var course = speed_course.split('/')[1].replace('°','');
 		    if(timestamp  && speed && lat && lon && course)
-		   		cb({error:null,data:{ timestamp: timestamp.trim(), unixtime:unixtime, latitude:lat.trim(), longitude:lon.trim(),speed:speed,course:course.trim()}})
+		   		cb(self.parsePosition({error:null,data:{ timestamp: timestamp.trim(), unixtime:unixtime, latitude:lat.trim(), longitude:lon.trim(),speed:speed,course:course.trim()}}));
 		   	else
 		  		cb({error:'an unknown error occured'});
 		  }else{
