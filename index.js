@@ -154,13 +154,13 @@ var api = new function(){
 		    var lat = lat_lon.split('/')[0];
 		    var lon = lat_lon.split('/')[1];
 
-		    if(lat.indexOf('N')==-1){
+		    if(lat.indexOf('N')>-1){
 		    	lat = parseFloat(lat)*-1
 		    	console.log('contains no N', lat);
 		    }else
 		    	lat = parseFloat(lat);
 
-		    if(lon.indexOf('E')==-1){
+		    if(lon.indexOf('E') > -1){
 		    	lon = parseFloat(lon)*-1
 		    	console.log('contains no E', lon);
 		    }else
