@@ -83,9 +83,16 @@ function getLocationFromMT(mmsi,cb) {
     convert 1 hour, 11 minutes ago (2018-11-23 01:17 (UTC))
     to 2018-11-23 01:17 (UTC)
       */
-      var date_str = $('#tabs-last-pos .group-ib strong').first().text().match(/\(([^)]+)\)/)[1]+')';
-    var timestamp = new Date(date_str).toString();
-    var unixtime = new Date(date_str).getTime()/1000;
+      var date_match = $('#tabs-last-pos .group-ib strong').first().text().match(/\(([^)]+)\)/);
+
+      if (date_match.length < 2) {
+        cb({error: 'could not parse extracted date: ' + date_match.toString()});
+      }
+
+      var date_str = date_match[1]+')';
+
+      var timestamp = new Date(date_str).toString();
+      var unixtime = new Date(date_str).getTime()/1000;
 
       var lat_lon = $('#tabs-last-pos .details_data_link').text().replace('°','').replace('°','');
       var lat = lat_lon.split('/')[0];
@@ -106,7 +113,7 @@ function getLocationFromMT(mmsi,cb) {
       var speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
       var speed = speed_course.split('/')[0].replace('kn ','');
       var course = speed_course.split('/')[1].replace('°','');
-      if(timestamp  && speed && lat && lon && course)
+      if(timestamp && speed && lat && lon && course)
         cb(parsePosition({error:null,data:{ timestamp: timestamp.trim(), unixtime:unixtime, latitude:lat, longitude:lon,speed:speed,course:course.trim()}}));
       else
         cb({error:'an unknown error occured'});
