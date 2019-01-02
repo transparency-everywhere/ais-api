@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 
 const api = require('./api');
+const areaApi = require('./area');
 
 function init() {
   const app = express();
@@ -28,7 +29,14 @@ function init() {
     api.getLocation(req.params.mmsi, (result) => {
       res.send(result);
     });
-  })
+  });
+
+  // e.g. /getVesselsInArea/WMED,EMED
+  app.get('/getVesselsInArea/:area', async (req, res) => {
+    const result = await areaApi.fetchVesselsInArea(req.params.area.split(','), (result) => {
+      res.json(result);
+    });
+  });
 
   app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));

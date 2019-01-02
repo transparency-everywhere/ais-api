@@ -7,6 +7,7 @@
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.2",
     "moment": "^2.19.1",
+    "puppeteer": "^1.11.0",
     "request": "^2.83.0",
     "tor-request": "^2.3.0"
   },
@@ -14,7 +15,7 @@
     "nodemon": "^1.18.9"
   },
   "scripts": {
-    "dev": "DEBUG=true nodemon --watch ./ index.js",
+    "dev": "DEBUG=true nodemon --watch ./ --watch lib index.js",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "parse-readme": "markdown readme.md > index.html"
