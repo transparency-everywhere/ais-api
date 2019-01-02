@@ -1,8 +1,8 @@
 {
-  "name": "ais_scraper",
+  "name": "ais-scraper",
   "version": "1.0.0",
   "description": "ais scraping script",
-  "main": "index.js",
+  "main": "server.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.2",
