@@ -12,13 +12,15 @@
     "tor-request": "^2.3.0"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9"
+    "nodemon": "^1.18.9",
+    "remark-cli": "^6.0.1",
+    "remark-html": "^9.0.0"
   },
   "scripts": {
     "dev": "DEBUG=true nodemon --watch ./ --watch lib index.js",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "parse-readme": "markdown readme.md > index.html"
+    "parse-readme": "remark readme.md -u html -o index.html"
   },
   "keywords": [
     "ais"

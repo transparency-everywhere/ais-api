@@ -19,6 +19,31 @@ example: http://localhost:5000/getLastPositionFromVF/244140096
 Returns position from MT
 example: http://localhost:5000/getLastPositionFromMT/244140096
 
+#### /getVesselsInArea/:area
+Returns all vessels in area, defined by a list of area keywords
+example: http://localhost:5000/getVesselsInArea/WMED,EMED
+``` Javascript
+[{
+  name: vessel.SHIPNAME,
+  id: vessel.SHIP_ID,
+  lat: Number(vessel.LAT),
+  lon: Number(vessel.LON),
+  timestamp: vessel.LAST_POS,
+  mmsi: vessel.MMSI,
+  imo: vessel.IMO,
+  callsign: vessel.CALLSIGN,
+  speed: Number(vessel.SPEED),
+  area: vessel.AREA_CODE,
+  type: vessel.TYPE_SUMMARY,
+  country: vessel.COUNTRY,
+  destination: vessel.DESTINATION,
+  port_current_id: vessel.PORT_ID,
+  port_current: vessel.CURRENT_PORT,
+  port_next_id: vessel.NEXT_PORT_ID,
+  port_next: vessel.NEXT_PORT_NAME,
+},…]
+```
+
 ## Install on local machine
 
 Requirements: npm & nodejs.
@@ -36,7 +61,3 @@ This application can be easily deployed to heroku, simply install the heroku cli
 `heroku create`
 
 `git push heroku master`
-
-
-
-

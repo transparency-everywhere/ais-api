@@ -13,7 +13,32 @@ const fetchResult = async (area, time, cb) => {
 
 const fetchVesselsInArea = (regions = ['WMED','EMED'], cb) => {
   const timeframe = [60, 525600];
-  fetchResult(regions.join(','), timeframe.join(','), cb);
+  fetchResult(regions.join(','), timeframe.join(','), (result) => {
+    if (!result || !result.data.length) {
+      return cb(null);
+    }
+
+    return cb(result.data.map((vessel) => ({
+      name: vessel.SHIPNAME,
+      id: vessel.SHIP_ID,
+      lat: Number(vessel.LAT),
+      lon: Number(vessel.LON),
+      timestamp: vessel.LAST_POS,
+      mmsi: vessel.MMSI,
+      imo: vessel.IMO,
+      callsign: vessel.CALLSIGN,
+      speed: Number(vessel.SPEED),
+      area: vessel.AREA_CODE,
+      type: vessel.TYPE_SUMMARY,
+      country: vessel.COUNTRY,
+      destination: vessel.DESTINATION,
+      port_current_id: vessel.PORT_ID,
+      port_current: vessel.CURRENT_PORT,
+      port_next_id: vessel.NEXT_PORT_ID,
+      port_next: vessel.NEXT_PORT_NAME,
+    })));
+
+  });
 }
 
 module.exports = {
