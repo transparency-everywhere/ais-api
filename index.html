@@ -1,25 +1,54 @@
-<h1 id="ais-api">AIS API</h1>
+<h1>AIS API</h1>
 <p>I looked for a free API solution to access machine readable AIS Data. This solution uses the free web solutions to crawl the data and returns them in json.</p>
-<h2 id="how-to-use">How to use</h2>
+<h2>How to use</h2>
 <p>This is a nodejs web app.</p>
-<h3 id="paths">Paths</h3>
-<h4 id="-getlastposition-mmsi-imo">/getLastPosition/:mmsi</h4>
-<p>Takes position from MT and from VT and returns the newest<br>example: <a href="http://localhost:5000/getLastPosition/244140096">http://localhost:5000/getLastPosition/244140096</a></p>
-<h4 id="-getlastpositionfromvf-imo">/getLastPositionFromVF/:imo</h4>
-<p>Returns position from VF<br>example: <a href="http://localhost:5000/getLastPositionFromVF/244140096">http://localhost:5000/getLastPositionFromVF/244140096</a></p>
-<h4 id="-getlastpositionfrommt-mmsi">/getLastPositionFromMT/:mmsi</h4>
-<p>Returns position from MT<br>example: <a href="http://localhost:5000/getLastPositionFromMT/244140096">http://localhost:5000/getLastPositionFromMT/244140096</a></p>
-<h2 id="install-on-local-machine">Install on local machine</h2>
-<p>Requirements: npm &amp; nodejs.</p>
+<h3>Paths</h3>
+<h4>/getLastPosition/:mmsi</h4>
+<p>Takes position from MT and from VT and returns the newest
+example: <a href="http://localhost:5000/getLastPosition/244140096">http://localhost:5000/getLastPosition/244140096</a></p>
+<h4>/getLastPositionFromVF/:mmsi</h4>
+<p>Returns position from VF
+example: <a href="http://localhost:5000/getLastPositionFromVF/244140096">http://localhost:5000/getLastPositionFromVF/244140096</a></p>
+<h4>/getLastPositionFromMT/:mmsi</h4>
+<p>Returns position from MT
+example: <a href="http://localhost:5000/getLastPositionFromMT/244140096">http://localhost:5000/getLastPositionFromMT/244140096</a></p>
+<h4>/getVesselsInArea/:area</h4>
+<p>Returns all vessels in area, defined by a list of area keywords
+example: <a href="http://localhost:5000/getVesselsInArea/WMED,EMED">http://localhost:5000/getVesselsInArea/WMED,EMED</a></p>
+<pre><code class="language-Javascript">[{
+  name: vessel.SHIPNAME,
+  id: vessel.SHIP_ID,
+  lat: Number(vessel.LAT),
+  lon: Number(vessel.LON),
+  timestamp: vessel.LAST_POS,
+  mmsi: vessel.MMSI,
+  imo: vessel.IMO,
+  callsign: vessel.CALLSIGN,
+  speed: Number(vessel.SPEED),
+  area: vessel.AREA_CODE,
+  type: vessel.TYPE_SUMMARY,
+  country: vessel.COUNTRY,
+  destination: vessel.DESTINATION,
+  port_current_id: vessel.PORT_ID,
+  port_current: vessel.CURRENT_PORT,
+  port_next_id: vessel.NEXT_PORT_ID,
+  port_next: vessel.NEXT_PORT_NAME,
+},…]
+</code></pre>
+<h2>Install on local machine</h2>
+<p>Requirements: npm &#x26; nodejs.</p>
 <ol>
-<li><p>clone this repo</p>
+<li>
+<p>clone this repo</p>
 </li>
-<li><p>run <code>npm install</code></p>
+<li>
+<p>run <code>npm install</code></p>
 </li>
-<li><p>run <code>node index.js</code></p>
+<li>
+<p>run <code>node index.js</code></p>
 </li>
 </ol>
-<h2 id="deploy-to-heroku">Deploy to heroku</h2>
+<h2>Deploy to heroku</h2>
 <p>This application can be easily deployed to heroku, simply install the heroku cli and run the following commands:</p>
 <p><code>heroku create</code></p>
 <p><code>git push heroku master</code></p>
