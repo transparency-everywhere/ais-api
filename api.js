@@ -115,7 +115,11 @@ function getLocationFromMT(mmsi, cb) {
         cb({ error: 'could not parse extracted date 123: ' + date_match });
         return false;
       }
-      let date_str = date_match;
+      let date_str;
+      if(typeof date_match == 'object')
+        date_str = date_match[1]+')';
+      else
+        date_str = date_match;
       /*console.log(date_match.length);
       console.log(typeof date_match);
       try{
