@@ -3,7 +3,7 @@ const moment = require('moment');
 const request = require('request');
 
 const debug = (...args) => {
-  if (process.env.DEBUG) {
+  if (true) {
     console.log.apply(console, args);
   }
 }
@@ -40,16 +40,25 @@ function getLocationFromVF(mmsi, cb) {
   };
 
   request(options, function (error, response, html) {
-    if (!error && response.statusCode == 200 || response.statusCode == 403) {
+    if (!error && response.statusCode == 200 || typeof response != 'undefined' && response.statusCode == 403) {
       const $ = cheerio.load(html);
       const course_speed = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(9) .v3').text();
-      const course = course_speed.split('/')[0].replace('° ', '');
-      const speed = course_speed.split('/')[1].replace(' kn', '');
+      let course, speed;
+      if(course_speed.length > 0){
+         course = course_speed.split('/')[0].replace('° ', '');
+         speed = course_speed.split('/')[1].replace(' kn', '');
+      }
       const lat_lon = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(10) .v3').text();
 
       debug('Extracted: ', lat_lon, speed, course);
 
       const splitted = lat_lon.split('/');
+      console.log(lat_lon, splitted, typeof splitted);
+      if(splitted.length <= 1){
+        debug('error VF');
+        cb({ error: 'an unknown error occured' });
+        return false;
+      }
       const latitude = splitted[0].indexOf('N') === -1 ? parseFloat(splitted[0]) * -1 : parseFloat(splitted[0]);
       const longitude = splitted[1].indexOf('E') === -1 ? parseFloat(splitted[1]) * -1 : parseFloat(splitted[1]);
 
@@ -91,12 +100,34 @@ function getLocationFromMT(mmsi, cb) {
       const $ = cheerio.load(html);
 
       // convert 1 hour, 11 minutes ago (2018-11-23 01:17 (UTC)) to 2018-11-23 01:17 (UTC)
-      const date_match = $('#tabs-last-pos .group-ib strong').first().text().match(/\(([^)]+)\)/);
-      if (date_match.length < 2) {
-        cb({ error: 'could not parse extracted date: ' + date_match.toString() });
+      let date_match = $('#tabs-last-pos .group-ib strong').first().text()
+
+      if(date_match.indexOf('(') > -1){
+
+        date_match = date_match.match(/\(([^)]+)\)/);
+        debug('date_match before transformation');
+        debug(date_match);
       }
 
-      const date_str = date_match[1]+')';
+      debug('date_match after transformation');
+      debug(date_match);
+      if (date_match == null || typeof date_match == 'object' && date_match.length < 2) {
+        cb({ error: 'could not parse extracted date 123: ' + date_match });
+        return false;
+      }
+      let date_str = date_match;
+      /*console.log(date_match.length);
+      console.log(typeof date_match);
+      try{
+        const date_str = date_match[1]+')';
+      }catch(e){
+        const date_str = String(date_match)+')';
+      }*/
+      if(typeof date_str == 'undefined')
+        return cb({ error: 'could not parse date from date str' });
+
+      debug('got date_str: '+date_str);
+
       const timestamp = new Date(date_str).toString();
       const unixtime = new Date(date_str).getTime()/1000;
 
@@ -142,7 +173,9 @@ function getLocation(mmsi, cb) {
 
     getLocationFromMT(mmsi, function(MTResult) {
       debug('got location from mt', MTResult);
-
+      if(!VFResult.data){
+        return cb(MTResult);
+      }
       const vfDate = moment(VFResult.data.timestamp);
       const mtDate = moment(MTResult.data.timestamp);
       const secondsDiff = mtDate.diff(vfDate, 'seconds')
