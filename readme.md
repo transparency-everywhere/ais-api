@@ -9,15 +9,15 @@ This is a nodejs web app.
 
 #### /getLastPosition/:mmsi
 Takes position from MT and from VT and returns the newest
-example: http://localhost:5000/getLastPosition/244140096
+example: http://localhost:5000/getLastPosition/211281610
 
 #### /getLastPositionFromVF/:mmsi
 Returns position from VF
-example: http://localhost:5000/getLastPositionFromVF/244140096
+example: http://localhost:5000/getLastPositionFromVF/
 
 #### /getLastPositionFromMT/:mmsi
 Returns position from MT
-example: http://localhost:5000/getLastPositionFromMT/244140096
+example: http://localhost:5000/getLastPositionFromMT/211281610
 
 #### /getVesselsInArea/:area
 Returns all vessels in area, defined by a list of area keywords
