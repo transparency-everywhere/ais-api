@@ -26,8 +26,13 @@ function parsePosition(position) {
 }
 
 const headers = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:24.0) Gecko/20100101 Firefox/24.0',
-  'Content-Type' : 'application/x-www-form-urlencoded'
+  'User-Agent': 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
+  'Content-Type' : 'application/x-www-form-urlencoded',
+  'cache-control': 'max-age=0',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+  'upgrade-insecure-requests':1,
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+  'cookie': '_ga=GA1.2.2068161988.1578622807; _gid=GA1.2.1986620835.1578622807'
 };
 
 function getLocationFromVF(mmsi, cb) {
@@ -38,22 +43,24 @@ function getLocationFromVF(mmsi, cb) {
     url,
     headers,
   };
-
   request(options, function (error, response, html) {
     if (!error && response.statusCode == 200 || typeof response != 'undefined' && response.statusCode == 403) {
       const $ = cheerio.load(html);
-      const course_speed = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(9) .v3').text();
+
+
+      const position = $('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(9) .v3').text();
+
+      const course_speed = $('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(9) .v3').text();
       let course, speed;
       if(course_speed.length > 0){
          course = course_speed.split('/')[0].replace('° ', '');
          speed = course_speed.split('/')[1].replace(' kn', '');
       }
-      const lat_lon = $('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(10) .v3').text();
+      const lat_lon = $('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(10) .v3').text();
 
       debug('Extracted: ', lat_lon, speed, course);
 
       const splitted = lat_lon.split('/');
-      console.log(lat_lon, splitted, typeof splitted);
       if(splitted.length <= 1){
         debug('error VF');
         cb({ error: 'an unknown error occured' });
@@ -62,8 +69,8 @@ function getLocationFromVF(mmsi, cb) {
       const latitude = splitted[0].indexOf('N') === -1 ? parseFloat(splitted[0]) * -1 : parseFloat(splitted[0]);
       const longitude = splitted[1].indexOf('E') === -1 ? parseFloat(splitted[1]) * -1 : parseFloat(splitted[1]);
 
-      const timestamp = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).toString();
-      const unixtime = new Date($('.vfix-top:nth-of-type(2) .tparams tr:nth-of-type(11) .v3').text()).getTime()/1000;
+      const timestamp = new Date($('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(11) .v3').text()).toString();
+      const unixtime = new Date($('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(11) .v3').text()).getTime()/1000;
 
       cb(
         parsePosition({
@@ -134,8 +141,13 @@ function getLocationFromMT(mmsi, cb) {
 
       const timestamp = new Date(date_str).toString();
       const unixtime = new Date(date_str).getTime()/1000;
-
+      if(isNaN(unixtime))
+        return cb({ error: 'could not parse date' });
+        
       const speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
+      if(typeof speed_course.split('/')[1] == 'undefined')
+        return cb({ error: 'could not parse speed and course' });
+        
       const speed = speed_course.split('/')[0].replace('kn ','');
       const course = speed_course.split('/')[1].replace('°','');
 
@@ -176,16 +188,20 @@ function getLocation(mmsi, cb) {
     debug('got location from vf', VFResult);
 
     getLocationFromMT(mmsi, function(MTResult) {
-      debug('got location from mt', MTResult);
-      if(!VFResult.data){
-        return cb(MTResult);
-      }
-      const vfDate = moment(VFResult.data.timestamp);
-      const mtDate = moment(MTResult.data.timestamp);
-      const secondsDiff = mtDate.diff(vfDate, 'seconds')
-      debug('time diff in seconds: ', secondsDiff);
+      if(MTResult.error){
+        cb(VFResult);
+      }else{
+        debug('got location from mt', MTResult);
+        if(!VFResult.data){
+          return cb(MTResult);
+        }
+        const vfDate = moment(VFResult.data.timestamp);
+        const mtDate = moment(MTResult.data.timestamp);
+        const secondsDiff = mtDate.diff(vfDate, 'seconds')
+        debug('time diff in seconds: ', secondsDiff);
 
-      cb(secondsDiff > 0 ? MTResult : VFResult);
+        cb(secondsDiff > 0 ? MTResult : VFResult);
+      }
     });
   });
 }
