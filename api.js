@@ -69,8 +69,8 @@ function getLocationFromVF(mmsi, cb) {
       const latitude = splitted[0].indexOf('N') === -1 ? parseFloat(splitted[0]) * -1 : parseFloat(splitted[0]);
       const longitude = splitted[1].indexOf('E') === -1 ? parseFloat(splitted[1]) * -1 : parseFloat(splitted[1]);
 
-      const timestamp = new Date($('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(11) .v3').text()).toString();
-      const unixtime = new Date($('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(11) .v3').text()).getTime()/1000;
+      const timestamp = new Date($('#lastrep').attr('data-title')).toString();
+      const unixtime = new Date(timestamp).getTime()/1000;
 
       cb(
         parsePosition({
