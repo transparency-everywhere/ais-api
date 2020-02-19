@@ -26,13 +26,12 @@ function parsePosition(position) {
 }
 
 const headers = {
-  'User-Agent': 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
+  //'User-Agent': 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
   'Content-Type' : 'application/x-www-form-urlencoded',
   'cache-control': 'max-age=0',
   'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
   'upgrade-insecure-requests':1,
-  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
-  'cookie': '_ga=GA1.2.2068161988.1578622807; _gid=GA1.2.1986620835.1578622807'
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8'
 };
 
 function getLocationFromVF(mmsi, cb) {
@@ -94,7 +93,7 @@ function getLocationFromVF(mmsi, cb) {
 
 
 function getLocationFromMT(mmsi, cb) {
-  const url = `https://www.marinetraffic.com/en/ais/details/ships/mmsi:${mmsi}`;
+  const url = `https://www.marinetraffic.com/en/data/?asset_type=vessels&columns=flag,shipname,photo,recognized_next_port,reported_eta,reported_destination,current_port,imo,mmsi,ship_type,show_on_live_map,time_of_latest_position,lat_of_latest_position,lon_of_latest_position&mmsi|eq|mmsi=${mmsi}`;
   debug('getLocationFromMT', url);
 
   const options = {
@@ -103,82 +102,72 @@ function getLocationFromMT(mmsi, cb) {
   };
 
   request(options, function (error, response, html) {
-    if (!error && response.statusCode == 200 || response.statusCode == 403) {
-      const $ = cheerio.load(html);
 
-      // convert 1 hour, 11 minutes ago (2018-11-23 01:17 (UTC)) to 2018-11-23 01:17 (UTC)
-      let date_match = $('#tabs-last-pos .group-ib strong').first().text()
 
-      if(date_match.indexOf('(') > -1){
 
-        date_match = date_match.match(/\(([^)]+)\)/);
-        debug('date_match before transformation');
-        debug(date_match);
-      }
+    if (!error && response.statusCode == 200 || response.statusCode == 403)  {
 
-      debug('date_match after transformation');
-      debug(date_match);
-      if (date_match == null || typeof date_match == 'object' && date_match.length < 2) {
-        cb({ error: 'could not parse extracted date 123: ' + date_match });
-        return false;
-      }
-      let date_str;
-      if(typeof date_match == 'object')
-        date_str = date_match[1]+')';
-      else
-        date_str = date_match;
-      /*console.log(date_match.length);
-      console.log(typeof date_match);
-      try{
-        const date_str = date_match[1]+')';
-      }catch(e){
-        const date_str = String(date_match)+')';
-      }*/
-      if(typeof date_str == 'undefined')
-        return cb({ error: 'could not parse date from date str' });
 
-      debug('got date_str: '+date_str);
+      console.log('first request successsfull, set cookie');
+      let secondRequestHeaders = headers;
+      secondRequestHeaders.cookie = response.headers['set-cookie'];
+      secondRequestHeaders.referer = `https://www.marinetraffic.com/en/data/?asset_type=vessels&columns=flag,shipname,photo,recognized_next_port,reported_eta,reported_destination,current_port,imo,mmsi,ship_type,show_on_live_map,time_of_latest_position,lat_of_latest_position,lon_of_latest_position&mmsi|eq|mmsi=${mmsi}`;
+      secondRequestHeaders['Vessel-Image'] = '007fb60815c6558c472a846479502b668e08';
 
-      const timestamp = new Date(date_str).toString();
-      const unixtime = new Date(date_str).getTime()/1000;
-      if(isNaN(unixtime))
-        return cb({ error: 'could not parse date' });
-        
-      const speed_course = $('#tabs-last-pos .group-ib:nth-child(6) strong').first().text();
-      if(typeof speed_course.split('/')[1] == 'undefined')
-        return cb({ error: 'could not parse speed and course' });
-        
-      const speed = speed_course.split('/')[0].replace('kn ','');
-      const course = speed_course.split('/')[1].replace('°','');
+      request({ url: `https://www.marinetraffic.com/en/reports?asset_type=vessels&columns=flag,shipname,photo,recognized_next_port,reported_eta,reported_destination,current_port,imo,mmsi,ship_type,show_on_live_map,time_of_latest_position,lat_of_latest_position,lon_of_latest_position&mmsi=${mmsi}`, headers:secondRequestHeaders},function(error, response, html){
 
-      const lat_lon = $('#tabs-last-pos .details_data_link').text().replace('°','').replace('°','');
+        if (!error && response.statusCode == 200 || response.statusCode == 403) {
 
-      debug('Extracted: ', lat_lon, speed, course);
+            console.log('second request worked');
 
-      const splitted = lat_lon.split('/');
-      const latitude = splitted[0].indexOf('N') > -1 ? parseFloat(splitted[0]) * -1 : parseFloat(splitted[0]);
-      const longitude = splitted[1].indexOf('E') > -1 ? parseFloat(splitted[1]) * -1 : parseFloat(splitted[1]);
+            console.log(html);
 
-      if (timestamp && speed && course && latitude, longitude) {
-        cb(
-          parsePosition({
-            error: null,
-            data: {
-              timestamp: timestamp.trim(),
-              unixtime,
-              course: course.trim(),
-              speed,
-              latitude,
-              longitude,
+            let parsed = JSON.parse(html);
+
+            console.log(parsed);
+
+            const latitude = parseFloat(parsed.data[0].LAT);
+            const longitude = parseFloat(parsed.data[0].LON);
+            const speed = parseFloat(parsed.data[0].SPEED);
+            const course = parseFloat(parsed.data[0].COURSE);
+
+            const timestamp = new Date(parsed.data[0].LAST_POS*1000).toString();
+            const unixtime = new Date(parsed.data[0].LAST_POS*1000).getTime()/1000;
+            console.log(123);
+
+            //const $ = cheerio.load(html);
+            console.log(timestamp, speed ,course ,latitude ,longitude)
+
+            if (timestamp && speed && course && latitude && longitude) {
+              cb(
+                parsePosition({
+                  error: null,
+                  data: {
+                    timestamp: timestamp,
+                    unixtime,
+                    course: course,
+                    speed,
+                    latitude,
+                    longitude,
+                  }
+                })
+              );
+            } else {
+              cb({ error: 'missing needed position data' });
             }
-          })
-        );
-      } else {
-        cb({ error: 'missing needed position data' });
-      }
+
+        } else {
+          cb({ error });
+        }
+
+      });
+
     } else {
       cb({ error });
     }
+
+
+
   });
 }
 
