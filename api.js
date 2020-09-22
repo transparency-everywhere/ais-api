@@ -125,37 +125,41 @@ function getLocationFromMT(mmsi, cb) {
             let parsed = JSON.parse(html);
 
             console.log(parsed);
+            if (parsed.totalCount > 0)
+              {
 
-            const latitude = parseFloat(parsed.data[0].LAT);
-            const longitude = parseFloat(parsed.data[0].LON);
-            const speed = parseFloat(parsed.data[0].SPEED);
-            const course = parseFloat(parsed.data[0].COURSE);
+              const latitude = parseFloat(parsed.data[0].LAT);
+              const longitude = parseFloat(parsed.data[0].LON);
+              const speed = parseFloat(parsed.data[0].SPEED);
+              const course = parseFloat(parsed.data[0].COURSE);
 
-            const timestamp = new Date(parsed.data[0].LAST_POS*1000).toString();
-            const unixtime = new Date(parsed.data[0].LAST_POS*1000).getTime()/1000;
-            console.log(123);
+              const timestamp = new Date(parsed.data[0].LAST_POS*1000).toString();
+              const unixtime = new Date(parsed.data[0].LAST_POS*1000).getTime()/1000;
+              console.log(123);
 
-            //const $ = cheerio.load(html);
-            console.log(timestamp, speed ,course ,latitude ,longitude)
+              //const $ = cheerio.load(html);
+              console.log(timestamp, speed ,course ,latitude ,longitude)
 
-            if (timestamp && speed && course && latitude && longitude) {
-              cb(
-                parsePosition({
-                  error: null,
-                  data: {
-                    timestamp: timestamp,
-                    unixtime,
-                    course: course,
-                    speed,
-                    latitude,
-                    longitude,
-                  }
-                })
-              );
+              if (timestamp && speed && course && latitude && longitude) {
+                cb(
+                  parsePosition({
+                    error: null,
+                    data: {
+                      timestamp: timestamp,
+                      unixtime,
+                      course: course,
+                      speed,
+                      latitude,
+                      longitude,
+                    }
+                  })
+                );
+              } else {
+                cb({ error: 'missing needed position data' });
+              }
             } else {
-              cb({ error: 'missing needed position data' });
+              cb({ error: 'no records were found' });
             }
-
         } else {
           cb({ error });
         }
