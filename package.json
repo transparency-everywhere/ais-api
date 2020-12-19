@@ -5,11 +5,11 @@
   "main": "server.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "express": "^4.16.2",
     "moment": "^2.29.1",
-    "puppeteer": "^1.14.0",
-    "request": "^2.83.0",
-    "tor-request": "^2.3.0"
+    "express": "^4.17.1",
+    "puppeteer": "^1.20.0",
+    "request": "^2.88.2",
+    "tor-request": "^2.3.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.9",
