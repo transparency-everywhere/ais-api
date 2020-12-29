@@ -54,6 +54,15 @@ Requirements: npm & nodejs.
 
 3. run `node index.js`
 
+## Install as docker container  
+  
+Requirements: docker  
+
+1. `docker build -t ais-api .`  
+
+2. `docker run -p 5000:5000 ais-api`  
+
+
 ## Deploy to heroku
 
 This application can be easily deployed to heroku, simply install the heroku cli and run the following commands:
