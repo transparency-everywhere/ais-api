@@ -25,7 +25,16 @@ function parsePosition(position) {
   }
 }
 
-const headers = {
+const headersVF = {
+  'User-Agent': 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
+  'Content-Type' : 'application/x-www-form-urlencoded',
+  'cache-control': 'max-age=0',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+  'upgrade-insecure-requests':1,
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8'
+};
+
+const headersMT = {
   //'User-Agent': 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
   'Content-Type' : 'application/x-www-form-urlencoded',
   'cache-control': 'max-age=0',
@@ -37,6 +46,8 @@ const headers = {
 function getLocationFromVF(mmsi, cb) {
   const url = `https://www.vesselfinder.com/vessels/somestring-MMSI-${mmsi}`;
   debug('getLocationFromVF', url);
+
+  headers = headersVF;
 
   const options = {
     url,
@@ -68,7 +79,7 @@ function getLocationFromVF(mmsi, cb) {
       const latitude = splitted[0].indexOf('N') === -1 ? parseFloat(splitted[0]) * -1 : parseFloat(splitted[0]);
       const longitude = splitted[1].indexOf('E') === -1 ? parseFloat(splitted[1]) * -1 : parseFloat(splitted[1]);
 
-      const timestamp = new Date($('#lastrep').attr('data-title')).toString();
+      const timestamp = new Date($('#lastrep').attr('data-title')).toISOString();
       const unixtime = new Date(timestamp).getTime()/1000;
 
       cb(
@@ -95,6 +106,8 @@ function getLocationFromVF(mmsi, cb) {
 function getLocationFromMT(mmsi, cb) {
   const url = `https://www.marinetraffic.com/en/data/?asset_type=vessels&columns=flag,shipname,photo,recognized_next_port,reported_eta,reported_destination,current_port,imo,mmsi,ship_type,show_on_live_map,time_of_latest_position,lat_of_latest_position,lon_of_latest_position&mmsi|eq|mmsi=${mmsi}`;
   debug('getLocationFromMT', url);
+
+  headers = headersMT;
 
   const options = {
     url,
@@ -133,7 +146,7 @@ function getLocationFromMT(mmsi, cb) {
               const speed = parseFloat(parsed.data[0].SPEED);
               const course = parseFloat(parsed.data[0].COURSE);
 
-              const timestamp = new Date(parsed.data[0].LAST_POS*1000).toString();
+              const timestamp = new Date(parsed.data[0].LAST_POS*1000).toISOString();
               const unixtime = new Date(parsed.data[0].LAST_POS*1000).getTime()/1000;
               console.log(123);
 
@@ -176,7 +189,7 @@ function getLocationFromMT(mmsi, cb) {
 }
 
 function getLocation(mmsi, cb) {
-  debug('getting location for vehicle: ', mmsi);
+  debug('getting location for vessel: ', mmsi);
   getLocationFromVF(mmsi, function(VFResult) {
     debug('got location from vf', VFResult);
 
@@ -188,7 +201,7 @@ function getLocation(mmsi, cb) {
         if(!VFResult.data){
           return cb(MTResult);
         }
-        const vfDate = moment(VFResult.data.timestamp);
+        const vfDate = moment( VFResult.data.timestamp);
         const mtDate = moment(MTResult.data.timestamp);
         const secondsDiff = mtDate.diff(vfDate, 'seconds')
         debug('time diff in seconds: ', secondsDiff);

@@ -1,28 +1,34 @@
-AIS API
-=======
+# AIS API
+
 I looked for a free API solution to access machine readable AIS Data. This solution uses the free web solutions to crawl the data and returns them in json.
 
 ## How to use
+
 This is a nodejs web app.
 
 ### Paths
 
 #### /getLastPosition/:mmsi
+
 Takes position from MT and from VT and returns the newest
 example: http://localhost:5000/getLastPosition/211281610
 
 #### /getLastPositionFromVF/:mmsi
+
 Returns position from VF
-example: http://localhost:5000/getLastPositionFromVF/
+example: http://localhost:5000/getLastPositionFromVF/211281610
 
 #### /getLastPositionFromMT/:mmsi
+
 Returns position from MT
 example: http://localhost:5000/getLastPositionFromMT/211281610
 
 #### /getVesselsInArea/:area
+
 Returns all vessels in area, defined by a list of area keywords
 example: http://localhost:5000/getVesselsInArea/WMED,EMED
-``` Javascript
+
+```Javascript
 [{
   name: vessel.SHIPNAME,
   id: vessel.SHIP_ID,
@@ -54,14 +60,13 @@ Requirements: npm & nodejs.
 
 3. run `node index.js`
 
-## Install as docker container  
-  
-Requirements: docker  
+## Install as docker container
 
-1. `docker build -t ais-api .`  
+Requirements: docker
 
-2. `docker run -p 5000:5000 ais-api`  
+1. `docker build -t ais-api .`
 
+2. `docker run -p 5000:5000 ais-api`
 
 ## Deploy to heroku
 
