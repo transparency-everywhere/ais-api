@@ -4,9 +4,10 @@
   "description": "ais scraping script",
   "main": "server.js",
   "dependencies": {
+    "brotli": "^1.3.2",
     "cheerio": "^1.0.0-rc.2",
-    "moment": "^2.29.1",
     "express": "^4.17.1",
+    "moment": "^2.29.1",
     "puppeteer": "^1.20.0",
     "request": "^2.88.2",
     "tor-request": "^2.3.1"
