@@ -50,6 +50,13 @@ example: http://localhost:5000/getVesselsInArea/WMED,EMED
 },…]
 ```
 
+#### /getVesselsInPort/:shipPort
+
+Returns all vessels in a port, named after the MT nomenclature
+example: http://localhost:5000/getVesselsInPort/piraeus
+
+Output format identical to **getVesselsInArea**
+
 ## Install on local machine
 
 Requirements: npm & nodejs.

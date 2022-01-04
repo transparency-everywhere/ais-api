@@ -5,16 +5,16 @@
 <h3>Paths</h3>
 <h4>/getLastPosition/:mmsi</h4>
 <p>Takes position from MT and from VT and returns the newest
-example: <a href="http://localhost:5000/getLastPosition/211281610">http://localhost:5000/getLastPosition/211281610</a></p>
+example: <a href="/getLastPosition/211281610">http://host:port/getLastPosition/211281610</a></p>
 <h4>/getLastPositionFromVF/:mmsi</h4>
 <p>Returns position from VF
-example: <a href="http://localhost:5000/getLastPositionFromVF/211281610">http://localhost:5000/getLastPositionFromVF/211281610</a></p>
+example: <a href="/getLastPositionFromVF/211281610">http://host:port/getLastPositionFromVF/211281610</a></p>
 <h4>/getLastPositionFromMT/:mmsi</h4>
 <p>Returns position from MT
-example: <a href="http://localhost:5000/getLastPositionFromMT/211281610">http://localhost:5000/getLastPositionFromMT/211281610</a></p>
+example: <a href="/getLastPositionFromMT/211281610">http://host:port/getLastPositionFromMT/211281610</a></p>
 <h4>/getVesselsInArea/:area</h4>
 <p>Returns all vessels in area, defined by a list of area keywords
-example: <a href="http://localhost:5000/getVesselsInArea/WMED,EMED">http://localhost:5000/getVesselsInArea/WMED,EMED</a></p>
+example: <a href="/getVesselsInArea/WMED,EMED">http://host:port/getVesselsInArea/WMED,EMED</a></p>
 <pre><code class="language-Javascript">[{
   name: vessel.SHIPNAME,
   id: vessel.SHIP_ID,
@@ -35,6 +35,10 @@ example: <a href="http://localhost:5000/getVesselsInArea/WMED,EMED">http://local
   port_next: vessel.NEXT_PORT_NAME,
 },…]
 </code></pre>
+<h4>/getVesselsInPort/:shipPort</h4>
+<p>Returns all vessels in a port, named after the MT nomenclature
+example: <a href="/getVesselsInPort/piraeus">http://host:port/getVesselsInPort/piraeus</a><br>
+Output format identical to <b>getVesselsInArea</b></p>
 <h2>Install on local machine</h2>
 <p>Requirements: npm &#x26; nodejs.</p>
 <ol>
