@@ -26,7 +26,16 @@ function parsePosition(position) {
   }
 }
 
-const headers = {
+const headersVF = {
+  'User-Agent': 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
+  'Content-Type' : 'application/x-www-form-urlencoded',
+  'cache-control': 'max-age=0',
+  'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+  'upgrade-insecure-requests':1,
+  'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8'
+};
+
+const headersMT = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3703.0 Safari/537.36',
   'Content-Type' : 'application/x-www-form-urlencoded',
   'cache-control': 'max-age=0',
@@ -40,6 +49,7 @@ function getLocationFromVF(mmsi, cb) {
   const url = `https://www.vesselfinder.com/vessels/somestring-MMSI-${mmsi}`;
   debug('getLocationFromVF', url);
 
+  headers = headersVF;
 
   const options = {
     url,
@@ -99,6 +109,7 @@ function getLocationFromMT(mmsi, cb) {
   const url = `https://www.marinetraffic.com/en/data/?asset_type=vessels&columns=flag,shipname,photo,recognized_next_port,reported_eta,reported_destination,current_port,imo,mmsi,ship_type,show_on_live_map,time_of_latest_position,lat_of_latest_position,lon_of_latest_position&mmsi|eq|mmsi=${mmsi}`;
   debug('getLocationFromMT', url);
 
+  headers = headersMT;
 
   const options = {
     url,
@@ -184,7 +195,7 @@ function getLocationFromMT(mmsi, cb) {
 
 function getLocation(mmsi, cb) {
   debug('getting location for vessel: ', mmsi);
-  getLocationFromVF(mmsi, function (VFResult) {
+  getLocationFromVF(mmsi, function(VFResult) {
     debug('got location from vf', VFResult);
 
     getLocationFromMT(mmsi, function (MTResult) {

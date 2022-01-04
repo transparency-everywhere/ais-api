@@ -15,7 +15,7 @@
   "devDependencies": {
     "nodemon": "^1.18.9",
     "remark-cli": "^6.0.1",
-    "remark-html": "^9.0.0"
+    "remark-html": "^13.0.2"
   },
   "scripts": {
     "dev": "DEBUG=true nodemon --watch ./ --watch lib index.js",
