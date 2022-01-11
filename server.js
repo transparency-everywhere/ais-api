@@ -3,11 +3,15 @@ const path = require('path');
 
 const api = require('./api');
 const areaApi = require('./area');
-
-function init() {
+/**
+ * Inits Database and triggers seeding if no database exists
+ * @constructor
+ * @param {int} port - Portnumber
+ */
+function init(port) {
   const app = express();
 
-  app.set('port', (process.env.PORT || 5000))
+  app.set('port', (port ||process.env.PORT || 5000))
 
   app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname + '/index.html'));
