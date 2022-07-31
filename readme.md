@@ -28,6 +28,11 @@ example: http://localhost:5000/getLastPositionFromMT/211281610
 Returns all vessels in area, defined by a list of area keywords
 example: http://localhost:5000/getVesselsInArea/WMED,EMED
 
+#### /getVesselsNearMe/:lat/:lng/:distance
+
+Returns all vessels near me, defined by a location in latitude, longitude, and distance
+example: http://localhost:5000/getVesselsNearMe/51.74190/3.89773/2
+
 ```Javascript
 [{
   name: vessel.SHIPNAME,

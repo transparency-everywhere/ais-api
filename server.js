@@ -42,6 +42,12 @@ function init(port) {
     });
   });
 
+  app.get('/getVesselsNearMe/:lat/:lng/:distance', async (req, res) => {
+    const result = await areaApi.fetchVesselsNearMe(req.params.lat, req.params.lng, req.params.distance, (result) => {
+      res.json(result);
+    });
+  });
+
   app.get('/getVesselsInPort/:shipPort', (req, res) => {
     api.getVesselsInPort(req.params.shipPort, (result) => {
       res.send(result);
