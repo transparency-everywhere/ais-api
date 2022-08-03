@@ -1,8 +1,9 @@
 const express = require('express');
 const path = require('path');
-
 const api = require('./api');
 const areaApi = require('./area');
+const cors = require("cors");
+
 /**
  * Inits Database and triggers seeding if no database exists
  * @constructor
@@ -12,6 +13,9 @@ function init(port) {
   const app = express();
 
   app.set('port', (port ||process.env.PORT || 5000))
+  app.use(cors({
+    origin: '*'
+  }));
 
   app.get('/', (request, response) => {
     response.sendFile(path.join(__dirname + '/index.html'));
