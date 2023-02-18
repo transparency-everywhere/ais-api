@@ -48,62 +48,9 @@ const headersMT = {
 function getLocationFromVF(mmsi, cb) {
   const url = `https://www.vesselfinder.com/vessels/somestring-MMSI-${mmsi}`;
   debug('getLocationFromVF', url);
-
-  headers = headersVF;
-
-  const options = {
-    url,
-    headers,
-  };
-  request(options, function (error, response, html) {
-    if (!error && response.statusCode == 200 || typeof response != 'undefined' && response.statusCode == 403) {
-      const $ = cheerio.load(html);
-
-
-      const position = $('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(9) .v3').text();
-
-      const course_speed = $('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(9) .v3').text();
-      let course, speed;
-      if(course_speed.length > 0){
-         course = course_speed.split('/')[0].replace('° ', '');
-         speed = course_speed.split('/')[1].replace(' kn', '');
-      }
-      const lat_lon = $('.vfix-top:nth-of-type(1) .tparams tr:nth-of-type(10) .v3').text();
-
-      debug('Extracted: ', lat_lon, speed, course);
-
-      const splitted = lat_lon.split('/');
-      if(splitted.length <= 1){
-        debug('error VF');
-        cb({ error: 'an unknown error occured' });
-        return false;
-      }
-      const latitude = splitted[0].indexOf('N') === -1 ? parseFloat(splitted[0]) * -1 : parseFloat(splitted[0]);
-      const longitude = splitted[1].indexOf('E') === -1 ? parseFloat(splitted[1]) * -1 : parseFloat(splitted[1]);
-
-      const timestamp = new Date($('#lastrep').attr('data-title')).toISOString();
-      const unixtime = new Date(timestamp).getTime()/1000;
-
-      cb(
-        parsePosition({
-          error: null,
-          data: {
-            timestamp,
-            unixtime,
-            course,
-            speed: speed.trim(),
-            latitude,
-            longitude,
-          }
-        })
-      );
-    } else {
-      debug('error VF');
-      cb({ error: 'an unknown error occured' });
-    }
-  });
+  debug('error VF');
+  cb({ error: 'an unknown error occured' });
 }
-
 
 function getLocationFromMT(mmsi, cb) {
   const url = `https://www.marinetraffic.com/en/data/?asset_type=vessels&columns=flag,shipname,photo,recognized_next_port,reported_eta,reported_destination,current_port,imo,mmsi,ship_type,show_on_live_map,time_of_latest_position,lat_of_latest_position,lon_of_latest_position&mmsi|eq|mmsi=${mmsi}`;
